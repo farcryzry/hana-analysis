@@ -66,7 +66,7 @@ public class KmeansAlgorithm extends Algorithm {
 				values[1] = defaultValue;
 			}
 			
-			sql += SqlGenerator.insert(getParamTableName(), values);
+			sql += SqlGenerator.insert(getParamTableName("PAL"), values);
 		}
 		
 		return sql;		
@@ -93,7 +93,7 @@ public class KmeansAlgorithm extends Algorithm {
 						setClause = "STRINGARGS='" + value + "'";
 					}
 					
-				sql += SqlGenerator.update(getParamTableName(), setClause, conditionClause);
+				sql += SqlGenerator.update(getParamTableName("PAL"), setClause, conditionClause);
 			}
 		}
 		

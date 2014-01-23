@@ -5,9 +5,19 @@ import java.util.*;
 public class AnalysisResult {
 	
 	private List<String> resultTables;
+	private String message;
 	
-	public AnalysisResult(List<String> tables) {
+	public AnalysisResult(List<String> tables, String message) {
 		this.resultTables = tables;
+		this.message = message;
+	}
+	
+	public String getMessage() {
+		return message;
+	}
+
+	public AnalysisResult(List<String> tables) {
+		this(tables, "");
 	}
 	
 	public List<String> getTables() {
@@ -15,7 +25,7 @@ public class AnalysisResult {
 	}
 	
 	public String ToSring() {
-		return this.resultTables.toString();
+		return resultTables != null ? this.resultTables.toString(): message;
 	}
 
 }

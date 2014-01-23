@@ -83,11 +83,11 @@ public class AlgorithmSignature implements ISqlGenerator {
 		return SqlGenerator.drop("TABLE", name);
 	}
 
-	public String truncate() {
+	public String truncate(String schemaName) {
 		String sql = "";
 		int idx = 1;
 		for (@SuppressWarnings("unused") TableType type : resultTableTypes) {
-			sql += SqlGenerator.truncateTable((algorithmName + "RESULT" + idx)) + "\n";
+			sql += SqlGenerator.truncateTable((schemaName + "." + algorithmName + "RESULT" + idx)) + "\n";
 			idx ++;
 		}
 

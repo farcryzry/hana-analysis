@@ -19,8 +19,8 @@ public abstract class Algorithm {
 		return name;
 	}
 	
-	public String getParamTableName() {
-		return name + "_PARAM";
+	public String getParamTableName(String schemaName) {
+		return schemaName + "." + name + "_PARAM";
 	}
 	
 	public String getProcedureName() {

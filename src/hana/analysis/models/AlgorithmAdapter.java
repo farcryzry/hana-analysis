@@ -5,10 +5,12 @@ import java.util.*;
 public class AlgorithmAdapter implements IAlgorithmAdapter {
 	private Algorithm algorithm;
 	private List<String> resultTables;
+	private String schemaName;
 	
-	public AlgorithmAdapter(Algorithm algorithm) {
+	public AlgorithmAdapter(Algorithm algorithm, String schemaName) {
 		this.algorithm = algorithm;
 		this.resultTables = new ArrayList<String>();
+		this.schemaName = schemaName;
 	}
 	
 	public List<String> getResultTables() {
@@ -27,7 +29,7 @@ public class AlgorithmAdapter implements IAlgorithmAdapter {
 		
 		//-- PAL setup
 		
-		sb.append(SqlGenerator.setSchema("PAL"));
+		sb.append(SqlGenerator.setSchema(schemaName));
 		
 		List<TableType> allTypes = algorithm.getSignature().getAllTypes();
 		for(TableType type : allTypes) {
@@ -51,15 +53,15 @@ public class AlgorithmAdapter implements IAlgorithmAdapter {
 		
 		//-- App setup
 		
-		sb.append(SqlGenerator.setSchema("PAL"));
+		sb.append(SqlGenerator.setSchema(schemaName));
 		
 		sb.append(SqlGenerator.drop("VIEW", source.getViewName()));
 		sb.append(SqlGenerator.createView(source.getViewName(), source.getViewDefination()));
-		sb.append(getSignature().getParamTableType().createTableByType(algorithm.getParamTableName()));
+		sb.append(getSignature().getParamTableType().createTableByType(algorithm.getParamTableName(this.schemaName)));
 		
 		int idx = 1;
 		for(TableType type : getSignature().getResultTableTypes()) {
-			sb.append(type.createTableByType(algorithm.getName() + "RESULT" + idx));
+			sb.append(type.createTableByType(type.getSchemaName() + "." + algorithm.getName() + "RESULT" + idx));
 			idx ++;
 		}
 		
@@ -75,23 +77,23 @@ public class AlgorithmAdapter implements IAlgorithmAdapter {
 		
 		//-- app runtime
 		
-		sb.append(SqlGenerator.setSchema("PAL"));
+		sb.append(SqlGenerator.setSchema(schemaName));
 		
 		if(params != null) {
 			sb.append(algorithm.updateParams(params));
 		}
 		
-		sb.append(getSignature().truncate());
+		sb.append(getSignature().truncate(schemaName));
 	
 		
 		List<Object> lstProcedureParam = new ArrayList<Object>();
 		lstProcedureParam.add(source.getViewName());
-		lstProcedureParam.add(algorithm.getParamTableName());
+		lstProcedureParam.add(algorithm.getParamTableName(this.schemaName));
 		
 		resultTables.clear();
 		int idx = 1;
-		for(@SuppressWarnings("unused") TableType type : getSignature().getResultTableTypes()) {
-			String tableName = algorithm.getName() + "RESULT" + idx;
+		for(TableType type : getSignature().getResultTableTypes()) {
+			String tableName = type.schemaName + "." + algorithm.getName() + "RESULT" + idx;
 			lstProcedureParam.add(tableName);
 			resultTables.add(tableName);
 			idx ++;
