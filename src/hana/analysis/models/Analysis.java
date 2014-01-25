@@ -21,13 +21,13 @@ public class Analysis {
 		try {
 			try {
 				c.QueryWithoutResult(sqlBuild);
-			} catch (SQLException e) {
+			} catch (Exception e) {
 				e.printStackTrace();
 				return new AnalysisResult(null, e.getMessage());
 			}
 			c.QueryWithoutResult(sqlRun);
 			return new AnalysisResult(adapter.getResultTables());
-		} catch (SQLException e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		return null;

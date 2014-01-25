@@ -3,6 +3,10 @@ package hana.analysis.db;
 import java.sql.*;
 import java.util.*;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectWriter;
+
 //import net.sf.json.*;
 
 /**
@@ -18,7 +22,8 @@ public class Connector {
 	String portNumber = "30015";
 	String dbName = "";
 
-	public Connection getConnection() throws SQLException {
+	public Connection getConnection() throws SQLException,
+			ClassNotFoundException {
 
 		Connection conn = null;
 		Properties connectionProps = new Properties();
@@ -29,6 +34,7 @@ public class Connector {
 		String connStr = "jdbc:" + this.dbms + "://" + this.serverName + ":"
 				+ this.portNumber + "/";
 
+		Class.forName("com.sap.db.jdbc.Driver");
 		conn = DriverManager.getConnection(connStr, connectionProps);
 
 		System.out.println("[Connected to database]");
@@ -47,6 +53,7 @@ public class Connector {
 			stmt = con.createStatement();
 			rs = stmt.executeQuery(sql);
 
+			
 			return convertResultSetToString(rs);
 
 		} catch (Exception e) {
@@ -62,7 +69,8 @@ public class Connector {
 		return null;
 	}
 
-	public String convertResultSetToString(ResultSet rs) throws SQLException {
+	public String convertResultSetToString(ResultSet rs) throws SQLException, JsonProcessingException {
+		/*
 		StringBuilder sb = new StringBuilder();
 		ResultSetMetaData rsmd = rs.getMetaData();
 		int columnsNumber = rsmd.getColumnCount();
@@ -77,9 +85,15 @@ public class Connector {
 		}
 		System.out.println(sb.toString());
 		return sb.toString();
+		*/
+		ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
+		Object o = resultSetToHashMap(rs);
+		String json = ow.writeValueAsString(o);
+		return json;
 	}
 
-	public void QueryWithoutResult(String sql) throws SQLException {
+	public void QueryWithoutResult(String sql) throws SQLException,
+			ClassNotFoundException {
 		Connection con = null;
 		Statement stmt = null;
 		String[] sqls = sql.split(";");
@@ -128,23 +142,33 @@ public class Connector {
 	}
 
 	/*
-	 * public static JSONArray convertToJSON(ResultSet resultSet) throws
-	 * Exception { JSONArray jsonArray = new JSONArray(); while
-	 * (resultSet.next()) { int total_rows =
-	 * resultSet.getMetaData().getColumnCount(); JSONObject obj = new
-	 * JSONObject(); for (int i = 0; i < total_rows; i++) {
-	 * obj.put(resultSet.getMetaData().getColumnLabel(i + 1) .toLowerCase(),
-	 * resultSet.getObject(i + 1)); } jsonArray.add(obj); } return jsonArray; }
-	 * 
-	 * public static JSONArray convertToJSON(List<HashMap<String, Object>> list)
-	 * throws Exception {
-	 * 
-	 * JSONArray jsonArray = new JSONArray();
-	 * 
-	 * for(HashMap<String, Object> map : list) { jsonArray.add(map); }
-	 * 
-	 * return jsonArray; }
-	 */
+	public static JSONArray convertToJSON(ResultSet resultSet) throws Exception {
+		JSONArray jsonArray = new JSONArray();
+		while (resultSet.next()) {
+			int total_rows = resultSet.getMetaData().getColumnCount();
+			JSONObject obj = new JSONObject();
+			for (int i = 0; i < total_rows; i++) {
+				obj.put(resultSet.getMetaData().getColumnLabel(i + 1)
+						.toLowerCase(), resultSet.getObject(i + 1));
+			}
+			jsonArray.add(obj);
+		}
+		return jsonArray;
+	}
+	
+
+	public static JSONArray convertToJSON(List<HashMap<String, Object>> list)
+			throws Exception {
+
+		JSONArray jsonArray = new JSONArray();
+
+		for (HashMap<String, Object> map : list) {
+			jsonArray.add(map);
+		}
+
+		return jsonArray;
+	}
+	*/
 
 	public static void main(String args[]) {
 		Connector c = new Connector();
