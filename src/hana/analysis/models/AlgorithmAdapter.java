@@ -17,6 +17,10 @@ public class AlgorithmAdapter implements IAlgorithmAdapter {
 		return resultTables;
 	}
 	
+	public Algorithm getAlgorithm() {
+		return algorithm;
+	}
+	
 	public AlgorithmSignature getSignature() {
 		return this.algorithm.getSignature();
 	}

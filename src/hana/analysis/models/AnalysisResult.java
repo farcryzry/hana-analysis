@@ -3,11 +3,12 @@ package hana.analysis.models;
 import java.util.*;
 
 public class AnalysisResult {
-	
+	private Algorithm algorithm;
 	private List<String> resultTables;
 	private String message;
 	
-	public AnalysisResult(List<String> tables, String message) {
+	public AnalysisResult(Algorithm algorithm, List<String> tables, String message) {
+		this.algorithm = algorithm;
 		this.resultTables = tables;
 		this.message = message;
 	}
@@ -16,8 +17,12 @@ public class AnalysisResult {
 		return message;
 	}
 
-	public AnalysisResult(List<String> tables) {
-		this(tables, "");
+	public AnalysisResult(Algorithm algorithm, List<String> tables) {
+		this(algorithm, tables, "");
+	}
+	
+	public Algorithm getAlgorithm() {
+		return algorithm;
 	}
 	
 	public List<String> getTables() {
