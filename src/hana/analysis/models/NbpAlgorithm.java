@@ -31,7 +31,7 @@ public class NbpAlgorithm extends Algorithm {
 		modelColumns.put("ID", "INTEGER");
 		modelColumns.put("JSONMODEL", "VARCHAR(5000)");
 		TableType modelTableType = new TableType("PAL", "PAL_T_NB_MODEL", modelColumns);
-		this.signature.setModelTableType(modelTableType);
+		this.signature.addModelTableType(modelTableType);
 		
 		LinkedHashMap<String, String> resultColumns = new LinkedHashMap<String, String>();
 		resultColumns.put("ID", "INTEGER");

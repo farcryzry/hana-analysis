@@ -4,7 +4,7 @@ import java.util.*;
 
 public interface IAlgorithmAdapter {
 	String build(DataSource source);
-	String execute(DataSource source, String trainningModelTable, Map<String, Object> params);
+	String execute(DataSource source, List<String> trainningModelTable, Map<String, Object> params);
 	List<String> getResultTables();
 	Algorithm getAlgorithm();
 	void setSignature(DataSource source);

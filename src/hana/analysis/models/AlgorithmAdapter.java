@@ -91,7 +91,7 @@ public class AlgorithmAdapter implements IAlgorithmAdapter {
 		return sb.toString();
 	}
 	
-	public String execute(DataSource source, String trainningModelTable, Map<String, Object> params) {
+	public String execute(DataSource source, List<String> trainningModelTables, Map<String, Object> params) {
 		StringBuilder sb = new StringBuilder();
 		
 		//-- app runtime
@@ -114,9 +114,11 @@ public class AlgorithmAdapter implements IAlgorithmAdapter {
 
 		lstProcedureParam.add(algorithm.getParamTableName(this.schemaName));
 		
-		if(trainningModelTable != null && trainningModelTable.length() > 0) {
-			SqlGenerator.addToObjectList(trainningModelTable);
-			lstProcedureParam.add(trainningModelTable);
+		for(String trainningModelTable : trainningModelTables) {
+			if(trainningModelTable != null && trainningModelTable.length() > 0) {
+				SqlGenerator.addToObjectList(trainningModelTable);
+				lstProcedureParam.add(trainningModelTable);
+			}
 		}
 		
 		resultTables.clear();

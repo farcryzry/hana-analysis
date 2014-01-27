@@ -12,12 +12,12 @@ public class Analysis {
 		this.adapter = new AlgorithmAdapter(algorithm, schemaName);
 	}
 
-	public AnalysisResult action(boolean reGenerate, DataSource source, String trainningModelTable,
+	public AnalysisResult action(boolean reGenerate, DataSource source, List<String> trainningModelTables,
 			Map<String, Object> params) {
 
 		adapter.setSignature(source);
 		String sqlBuild = reGenerate ?  adapter.build(source) : "";
-		String sqlRun = adapter.execute(source, trainningModelTable, params);
+		String sqlRun = adapter.execute(source, trainningModelTables, params);
 
 		Connector c = new Connector();
 		try {

@@ -6,6 +6,8 @@ import hana.analysis.models.DataSource;
 import hana.analysis.models.KmeansAlgorithm;
 import hana.analysis.models.NbAlgorithm;
 import hana.analysis.models.NbpAlgorithm;
+import hana.analysis.models.SvmAlgorithm;
+import hana.analysis.models.SvmpAlgorithm;
 
 import java.util.*;
 
@@ -122,8 +124,79 @@ public class Pal {
 		Analysis analysis = new Analysis(new NbpAlgorithm(), schemaName);
 
 		DataSource source = new DataSource(schemaName, tableData, columns, null, data);
+		
+		List<String> ModelTables = new ArrayList<String>();
+		ModelTables.add(tableNBModel);
 
-		AnalysisResult result = analysis.action(reGenerate, source, tableNBModel, params);
+		AnalysisResult result = analysis.action(reGenerate, source, ModelTables, params);
+		System.out.println(result);
+		return result;
+	}
+	
+	/**
+	 * SAP_HANA_Predictive_Analysis_Library_PAL_en P123
+	 * 
+	 * @param tableData
+	 *            Table name for input data
+	 * @param columns
+	 *            Column names for the input data table
+	 * @param params
+	 *            Parameters for the algorithm
+	 * 
+	 *            <pre>
+	 * 'THREAD_NUMBER': Number of threads.
+	 * 'KERNEL_TYPE': Kernel type:
+	 * 		 0: LINEAR KERNEL
+	 * 		 1: POLY KERNEL
+	 * 		 2: RBF KERNEL
+	 * 		 3: SIGMOID KERNEL
+	 * 		Default value: 2
+	 * 'TYPE': SVM type:
+	 * 		 1: SVC (for classification)
+	 * 		 2: SVR (for regression)
+	 * 		 3: Support Vector Ranking (for ranking)
+	 * </pre>
+	 * 
+	 * @return SV_MODEL1, SV_MODEL2
+	 */
+	public static AnalysisResult supportVectorMachine(boolean reGenerate, String schemaName, String tableData, LinkedHashMap<String, String> columns, String viewDef,
+			LinkedHashMap<String, Object> params) {
+		Analysis analysis = new Analysis(new SvmAlgorithm(), schemaName);
+
+		DataSource source = new DataSource(schemaName, tableData, columns, viewDef);
+
+		AnalysisResult result = analysis.action(reGenerate, source, null, params);
+		System.out.println(result);
+		return result;
+	}
+
+	/**
+	 * SAP_HANA_Predictive_Analysis_Library_PAL_en P123
+	 * 
+	 * @param tableData
+	 *            Table name for input data
+	 * @param columns
+	 *            Column names for the input data table
+	 * @param tableSVModel1
+	 *            Table name for output data
+	 * @param tableSVModel2
+	 *            Table name for output data
+	 * @param params
+	 *            Parameters for the algorithm
+	 * 
+	 *            <pre>
+	 * 'THREAD_NUMBER': Number of threads.
+	 * </pre>
+	 * 
+	 * @return SVP_PREDICT
+	 */
+	public static AnalysisResult supportVectorMachinePredict(boolean reGenerate, String schemaName, String tableData, LinkedHashMap<String, String> columns, List<List<Object>> data,
+			List<String> ModelTables, LinkedHashMap<String, Object> params) {
+		Analysis analysis = new Analysis(new SvmpAlgorithm(), schemaName);
+
+		DataSource source = new DataSource(schemaName, tableData, columns, null, data);
+
+		AnalysisResult result = analysis.action(reGenerate, source, ModelTables, params);
 		System.out.println(result);
 		return result;
 	}
@@ -357,74 +430,5 @@ public class Pal {
 			String tableModleJson, LinkedHashMap<String, Object> params) {
 		// TODO
 		return "DTP_PREDICT";
-	}
-
-	/**
-	 * SAP_HANA_Predictive_Analysis_Library_PAL_en P123
-	 * 
-	 * @param tableData
-	 *            Table name for input data
-	 * @param columns
-	 *            Column names for the input data table
-	 * @param params
-	 *            Parameters for the algorithm
-	 * 
-	 *            <pre>
-	 * 'THREAD_NUMBER': Number of threads.
-	 * 'KERNEL_TYPE': Kernel type:
-	 * 		 0: LINEAR KERNEL
-	 * 		 1: POLY KERNEL
-	 * 		 2: RBF KERNEL
-	 * 		 3: SIGMOID KERNEL
-	 * 		Default value: 2
-	 * 'TYPE': SVM type:
-	 * 		 1: SVC (for classification)
-	 * 		 2: SVR (for regression)
-	 * 		 3: Support Vector Ranking (for ranking)
-	 * </pre>
-	 * 
-	 * @return SV_MODEL1, SV_MODEL2
-	 */
-	public String[] supportVectorMachine(String tableData, String[] columns,
-			LinkedHashMap<String, Object> params) {
-		// TODO
-		return new String[] { "SV_MODEL1", "SV_MODEL2" };
-	}
-
-	/**
-	 * SAP_HANA_Predictive_Analysis_Library_PAL_en P123
-	 * 
-	 * @param tableData
-	 *            Table name for input data
-	 * @param columns
-	 *            Column names for the input data table
-	 * @param tableSVModel1
-	 *            Table name for output data
-	 * @param tableSVModel2
-	 *            Table name for output data
-	 * @param params
-	 *            Parameters for the algorithm
-	 * 
-	 *            <pre>
-	 * 'THREAD_NUMBER': Number of threads.
-	 * 'KERNEL_TYPE': Kernel type:
-	 * 		 0: LINEAR KERNEL
-	 * 		 1: POLY KERNEL
-	 * 		 2: RBF KERNEL
-	 * 		 3: SIGMOID KERNEL
-	 * 		Default value: 2
-	 * 'TYPE': SVM type:
-	 * 		 1: SVC (for classification)
-	 * 		 2: SVR (for regression)
-	 * 		 3: Support Vector Ranking (for ranking)
-	 * </pre>
-	 * 
-	 * @return SVP_PREDICT
-	 */
-	public String supportVectorMachinePredict(String tableData,
-			String[] columns, String tableSVModel1, String tableSVModel2,
-			LinkedHashMap<String, Object> params) {
-		// TODO
-		return "SVP_PREDICT";
 	}
 }
