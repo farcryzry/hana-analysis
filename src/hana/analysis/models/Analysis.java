@@ -12,11 +12,12 @@ public class Analysis {
 		this.adapter = new AlgorithmAdapter(algorithm, schemaName);
 	}
 
-	public AnalysisResult action(boolean reGenerate, DataSource source,
+	public AnalysisResult action(boolean reGenerate, DataSource source, String trainningModelTable,
 			Map<String, Object> params) {
 
+		adapter.setSignature(source);
 		String sqlBuild = reGenerate ?  adapter.build(source) : "";
-		String sqlRun = adapter.execute(source, params);
+		String sqlRun = adapter.execute(source, trainningModelTable, params);
 
 		Connector c = new Connector();
 		try {
@@ -50,7 +51,7 @@ public class Analysis {
 		DataSource source = new DataSource("PAL", "CUSTOMERS", columns,
 				"SELECT ID, LIFESPEND, NEWSPEND, INCOME, LOYALTY FROM PAL.CUSTOMERS");
 
-		AnalysisResult result = analysis.action(true, source, null);
+		AnalysisResult result = analysis.action(true, source, null, null);
 		System.out.println(result);
 
 		Connector c = new Connector();

@@ -6,6 +6,7 @@ public class AlgorithmSignature implements ISqlGenerator {
 	private String name;
 	private String algorithmName;
 	private TableType dataSourceType;
+	private TableType modelTableType;
 	private TableType paramTableType;
 	private List<TableType> resultTableTypes;
 	LinkedHashMap<String, String> columns;
@@ -31,6 +32,14 @@ public class AlgorithmSignature implements ISqlGenerator {
 	public void setDataSourceType(TableType dataSourceType) {
 		this.dataSourceType = dataSourceType;
 	}
+	
+	public TableType getModelTableType() {
+		return modelTableType;
+	}
+
+	public void setModelTableType(TableType modelTableType) {
+		this.modelTableType = modelTableType;
+	}
 
 	public TableType getParamTableType() {
 		return paramTableType;
@@ -55,6 +64,7 @@ public class AlgorithmSignature implements ISqlGenerator {
 		List<TableType> lst = new ArrayList<TableType>();
 		lst.add(dataSourceType);
 		lst.add(paramTableType);
+		//lst.add(modelTableType);
 		lst.addAll(resultTableTypes);
 
 		return lst;
@@ -64,14 +74,23 @@ public class AlgorithmSignature implements ISqlGenerator {
 	public String create() {
 		String sql = "";
 		sql += SqlGenerator.createTable(name, columns);
+		
+		int index = 0;
 
-		sql += SqlGenerator.insert(name, new Object[] { 1,
+		sql += SqlGenerator.insert(name, new Object[] { ++ index,
 				dataSourceType.getTypeName(), "in" });
-		sql += SqlGenerator.insert(name, new Object[] { 2,
+		sql += SqlGenerator.insert(name, new Object[] { ++ index,
 				paramTableType.getTypeName(), "in" });
-
+		
+		if(modelTableType != null) {
+			sql += SqlGenerator.insert(name, new Object[] { ++ index,
+					modelTableType.getTypeName(), "in" });
+		}
+		
+		index ++;
+		
 		for (int i = 0; i < resultTableTypes.size(); i++) {
-			sql += SqlGenerator.insert(name, new Object[] { 3 + i,
+			sql += SqlGenerator.insert(name, new Object[] { index + i,
 					resultTableTypes.get(i).getTypeName(), "out" });
 		}
 

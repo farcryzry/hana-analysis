@@ -25,10 +25,12 @@ public class AlgorithmAdapter implements IAlgorithmAdapter {
 		return this.algorithm.getSignature();
 	}
 	
-	public String build(DataSource source) {
-		
+	public void setSignature(DataSource source) {
 		algorithm.setSignature(source);
-		
+	}
+	
+	public String build(DataSource source) {
+
 		StringBuilder sb = new StringBuilder();
 		
 		//-- PAL setup
@@ -59,9 +61,22 @@ public class AlgorithmAdapter implements IAlgorithmAdapter {
 		
 		sb.append(SqlGenerator.setSchema(schemaName));
 		
-		sb.append(SqlGenerator.drop("VIEW", source.getViewName()));
-		sb.append(SqlGenerator.createView(source.getViewName(), source.getViewDefination()));
+		if(source.containsView()) {
+			sb.append(SqlGenerator.drop("VIEW", source.getViewName()));
+			sb.append(SqlGenerator.createView(source.getViewName(), source.getViewDefination()));
+		} else {
+			sb.append(SqlGenerator.drop("TABLE", source.getTableName()));
+			sb.append(SqlGenerator.createTableByType(source.getTableName(), getSignature().getDataSourceType().getTypeName()));
+		}
 		sb.append(getSignature().getParamTableType().createTableByType(algorithm.getParamTableName(this.schemaName)));
+		
+		if(!source.containsView()) {
+			sb.append(SqlGenerator.truncateTable(source.getTableName()));
+			List<List<Object>> tableData = source.getData();
+			for(List<Object> row : tableData) {
+				sb.append(SqlGenerator.insert(source.getTableName(), row));
+			}
+		}
 		
 		int idx = 1;
 		for(TableType type : getSignature().getResultTableTypes()) {
@@ -76,7 +91,7 @@ public class AlgorithmAdapter implements IAlgorithmAdapter {
 		return sb.toString();
 	}
 	
-	public String execute(DataSource source, Map<String, Object> params) {
+	public String execute(DataSource source, String trainningModelTable, Map<String, Object> params) {
 		StringBuilder sb = new StringBuilder();
 		
 		//-- app runtime
@@ -91,8 +106,18 @@ public class AlgorithmAdapter implements IAlgorithmAdapter {
 	
 		
 		List<Object> lstProcedureParam = new ArrayList<Object>();
-		lstProcedureParam.add(source.getViewName());
+		if(source.containsView()) {
+			lstProcedureParam.add(source.getViewName());
+		} else {
+			lstProcedureParam.add(source.getTableName());
+		}
+
 		lstProcedureParam.add(algorithm.getParamTableName(this.schemaName));
+		
+		if(trainningModelTable != null && trainningModelTable.length() > 0) {
+			SqlGenerator.addToObjectList(trainningModelTable);
+			lstProcedureParam.add(trainningModelTable);
+		}
 		
 		resultTables.clear();
 		int idx = 1;
@@ -103,7 +128,7 @@ public class AlgorithmAdapter implements IAlgorithmAdapter {
 			idx ++;
 		}
 		
-		sb.append(SqlGenerator.callProcedure("_SYS_AFL." + algorithm.getProcedureName(), lstProcedureParam, true));
+		sb.append(SqlGenerator.callProcedure("_SYS_AFL." + algorithm.getProcedureName(), lstProcedureParam, false, true));
 		
 		System.out.println(sb);
 		

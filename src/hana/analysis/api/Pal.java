@@ -5,6 +5,7 @@ import hana.analysis.models.AnalysisResult;
 import hana.analysis.models.DataSource;
 import hana.analysis.models.KmeansAlgorithm;
 import hana.analysis.models.NbAlgorithm;
+import hana.analysis.models.NbpAlgorithm;
 
 import java.util.*;
 
@@ -54,7 +55,7 @@ public class Pal {
 
 		DataSource source = new DataSource(schemaName, tableData, columns,viewDef);
 
-		AnalysisResult result = analysis.action(reGenerate, source, params);
+		AnalysisResult result = analysis.action(reGenerate, source, null, params);
 		System.out.println(result);
 		return result;
 	}
@@ -87,7 +88,7 @@ public class Pal {
 
 		DataSource source = new DataSource(schemaName, tableData, columns, viewDef);
 
-		AnalysisResult result = analysis.action(reGenerate, source, params);
+		AnalysisResult result = analysis.action(reGenerate, source, null, params);
 		System.out.println(result);
 		return result;
 	}
@@ -116,10 +117,15 @@ public class Pal {
 	 * 
 	 * @return NBP_PREDICT
 	 */
-	public String naiveBayesPredict(String tableData, String[] columns,
+	public static AnalysisResult naiveBayesPredict(boolean reGenerate, String schemaName, String tableData, LinkedHashMap<String, String> columns, List<List<Object>> data,
 			String tableNBModel, LinkedHashMap<String, Object> params) {
-		// TODO
-		return "NBP_PREDICT";
+		Analysis analysis = new Analysis(new NbpAlgorithm(), schemaName);
+
+		DataSource source = new DataSource(schemaName, tableData, columns, null, data);
+
+		AnalysisResult result = analysis.action(reGenerate, source, tableNBModel, params);
+		System.out.println(result);
+		return result;
 	}
 
 	/**
