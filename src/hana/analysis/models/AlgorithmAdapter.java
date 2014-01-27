@@ -103,7 +103,7 @@ public class AlgorithmAdapter implements IAlgorithmAdapter {
 			idx ++;
 		}
 		
-		sb.append(SqlGenerator.callProcedure("_SYS_AFL.PAL_KM", lstProcedureParam, true));
+		sb.append(SqlGenerator.callProcedure("_SYS_AFL." + algorithm.getProcedureName(), lstProcedureParam, true));
 		
 		System.out.println(sb);
 		

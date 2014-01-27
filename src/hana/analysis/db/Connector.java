@@ -94,6 +94,9 @@ public class Connector {
 
 	public void QueryWithoutResult(String sql) throws SQLException,
 			ClassNotFoundException {
+		
+		if(sql.isEmpty()) return;
+		
 		Connection con = null;
 		Statement stmt = null;
 		String[] sqls = sql.split(";");
@@ -124,7 +127,6 @@ public class Connector {
 	 * convertToJSON(Query(sql)); }
 	 */
 
-	@SuppressWarnings("unused")
 	private List<HashMap<String, Object>> resultSetToHashMap(ResultSet rs)
 			throws SQLException {
 		ResultSetMetaData md = rs.getMetaData();

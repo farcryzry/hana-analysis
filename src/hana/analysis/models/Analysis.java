@@ -15,7 +15,7 @@ public class Analysis {
 	public AnalysisResult action(boolean reGenerate, DataSource source,
 			Map<String, Object> params) {
 
-		String sqlBuild = reGenerate ? "" : adapter.build(source);
+		String sqlBuild = reGenerate ?  adapter.build(source) : "";
 		String sqlRun = adapter.execute(source, params);
 
 		Connector c = new Connector();

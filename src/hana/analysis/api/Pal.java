@@ -4,6 +4,7 @@ import hana.analysis.models.Analysis;
 import hana.analysis.models.AnalysisResult;
 import hana.analysis.models.DataSource;
 import hana.analysis.models.KmeansAlgorithm;
+import hana.analysis.models.NbAlgorithm;
 
 import java.util.*;
 
@@ -56,6 +57,69 @@ public class Pal {
 		AnalysisResult result = analysis.action(reGenerate, source, params);
 		System.out.println(result);
 		return result;
+	}
+	
+	/**
+	 * SAP_HANA_Predictive_Analysis_Library_PAL_en P109
+	 * 
+	 * @param tableData
+	 *            Table name for input data
+	 * @param columns
+	 *            Column names for the input data table
+	 * @param params
+	 *            Parameters for the algorithm
+	 * 
+	 *            <pre>
+	 * 'THREAD_NUMBER': Number of threads.
+	 * 'IS_SPLIT_MODEL': Indicates whether to split the string of the model.
+	 * 				 0: does not split the model
+	 * 				 Other value: splits the model. The maximum length of each unit is 5000.
+	 * 'LAPLACE': Enables or disables Laplace smoothing.
+	 * 				 0 (default): disables Laplace smoothing
+	 * 				 Positive value: enables Laplace smoothing for discrete values
+	 * </pre>
+	 * 
+	 * @return NB_MODEL
+	 */
+	public static AnalysisResult naiveBayes(boolean reGenerate, String schemaName, String tableData, LinkedHashMap<String, String> columns, String viewDef,
+			LinkedHashMap<String, Object> params) {
+		Analysis analysis = new Analysis(new NbAlgorithm(), schemaName);
+
+		DataSource source = new DataSource(schemaName, tableData, columns, viewDef);
+
+		AnalysisResult result = analysis.action(reGenerate, source, params);
+		System.out.println(result);
+		return result;
+	}
+
+	/**
+	 * SAP_HANA_Predictive_Analysis_Library_PAL_en P109
+	 * 
+	 * @param tableData
+	 *            Table name for input data
+	 * @param columns
+	 *            Column names for the input data table
+	 * @param tableNBModel
+	 *            Table name for output data
+	 * @param params
+	 *            Parameters for the algorithm
+	 * 
+	 *            <pre>
+	 * 'THREAD_NUMBER': Number of threads.
+	 * 'IS_SPLIT_MODEL': Indicates whether to split the string of the model.
+	 * 				 0: does not split the model
+	 * 				 Other value: splits the model. The maximum length of each unit is 5000.
+	 * 'LAPLACE': Enables or disables Laplace smoothing.
+	 * 				 0 (default): disables Laplace smoothing
+	 * 				 Positive value: enables Laplace smoothing for discrete values
+	 * </pre>
+	 * 
+	 * @return NBP_PREDICT
+	 */
+	public String naiveBayesPredict(String tableData, String[] columns,
+			String tableNBModel, LinkedHashMap<String, Object> params) {
+		// TODO
+		return "NBP_PREDICT";
 	}
 
 	/**
@@ -215,63 +279,7 @@ public class Pal {
 		return "RGP_PREDICTED";
 	}
 
-	/**
-	 * SAP_HANA_Predictive_Analysis_Library_PAL_en P109
-	 * 
-	 * @param tableData
-	 *            Table name for input data
-	 * @param columns
-	 *            Column names for the input data table
-	 * @param params
-	 *            Parameters for the algorithm
-	 * 
-	 *            <pre>
-	 * 'THREAD_NUMBER': Number of threads.
-	 * 'IS_SPLIT_MODEL': Indicates whether to split the string of the model.
-	 * 				 0: does not split the model
-	 * 				 Other value: splits the model. The maximum length of each unit is 5000.
-	 * 'LAPLACE': Enables or disables Laplace smoothing.
-	 * 				 0 (default): disables Laplace smoothing
-	 * 				 Positive value: enables Laplace smoothing for discrete values
-	 * </pre>
-	 * 
-	 * @return NB_MODEL
-	 */
-	public String naiveBayes(String tableData, String[] columns,
-			LinkedHashMap<String, Object> params) {
-		// TODO
-		return "NB_MODEL";
-	}
-
-	/**
-	 * SAP_HANA_Predictive_Analysis_Library_PAL_en P109
-	 * 
-	 * @param tableData
-	 *            Table name for input data
-	 * @param columns
-	 *            Column names for the input data table
-	 * @param tableNBModel
-	 *            Table name for output data
-	 * @param params
-	 *            Parameters for the algorithm
-	 * 
-	 *            <pre>
-	 * 'THREAD_NUMBER': Number of threads.
-	 * 'IS_SPLIT_MODEL': Indicates whether to split the string of the model.
-	 * 				 0: does not split the model
-	 * 				 Other value: splits the model. The maximum length of each unit is 5000.
-	 * 'LAPLACE': Enables or disables Laplace smoothing.
-	 * 				 0 (default): disables Laplace smoothing
-	 * 				 Positive value: enables Laplace smoothing for discrete values
-	 * </pre>
-	 * 
-	 * @return NBP_PREDICT
-	 */
-	public String naiveBayesPredict(String tableData, String[] columns,
-			String tableNBModel, LinkedHashMap<String, Object> params) {
-		// TODO
-		return "NBP_PREDICT";
-	}
+	
 
 	/**
 	 * Decision Tree C4.5 SAP_HANA_Predictive_Analysis_Library_PAL_en P66

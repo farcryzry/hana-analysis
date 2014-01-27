@@ -9,6 +9,7 @@ hana\analysis\models\IAlgorithmAdapter.class
 hana\analysis\models\ISqlGenerator.class
 hana\analysis\models\LrpAlgorithm.class
 hana\analysis\models\SomAlgorithm.class
+hana\analysis\api\Pal.class
 hana\analysis\models\LrAlgorithm.class
 hana\analysis\models\WstAlgorithm.class
 hana\analysis\models\AnalysisResult.class
