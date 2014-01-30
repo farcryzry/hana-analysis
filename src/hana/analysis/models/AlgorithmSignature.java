@@ -6,6 +6,7 @@ public class AlgorithmSignature implements ISqlGenerator {
 	private String name;
 	private String algorithmName;
 	private TableType dataSourceType;
+	private TableType classTableType;
 	private List<TableType> modelTableTypes;
 	private TableType paramTableType;
 	private List<TableType> resultTableTypes;
@@ -66,6 +67,7 @@ public class AlgorithmSignature implements ISqlGenerator {
 		List<TableType> lst = new ArrayList<TableType>();
 		lst.add(dataSourceType);
 		lst.add(paramTableType);
+		// lst.addAll(classTableTypes);
 		// lst.addAll(modelTableTypes);
 		lst.addAll(resultTableTypes);
 
@@ -81,21 +83,29 @@ public class AlgorithmSignature implements ISqlGenerator {
 
 		sql += SqlGenerator.insert(name,
 				new Object[] { ++index, dataSourceType.getTypeName(), "in" });
+
+		if (classTableType != null) {
+			sql += SqlGenerator.insert(name, new Object[] { ++index,
+					classTableType.getTypeName(), "in" });
+		}
+
 		sql += SqlGenerator.insert(name,
 				new Object[] { ++index, paramTableType.getTypeName(), "in" });
 
-		index++;
-
-		for (int i = 0; i < modelTableTypes.size(); i++) {
-			sql += SqlGenerator.insert(name, new Object[] { index + i,
-					modelTableTypes.get(i).getTypeName(), "in" });
+		if (modelTableTypes != null) {
+			index++;
+			for (int i = 0; i < modelTableTypes.size(); i++) {
+				sql += SqlGenerator.insert(name, new Object[] { index + i,
+						modelTableTypes.get(i).getTypeName(), "in" });
+			}
 		}
 
-		index++;
-
-		for (int i = 0; i < resultTableTypes.size(); i++) {
-			sql += SqlGenerator.insert(name, new Object[] { index + i,
-					resultTableTypes.get(i).getTypeName(), "out" });
+		if (resultTableTypes != null) {
+			index++;
+			for (int i = 0; i < resultTableTypes.size(); i++) {
+				sql += SqlGenerator.insert(name, new Object[] { index + i,
+						resultTableTypes.get(i).getTypeName(), "out" });
+			}
 		}
 
 		return sql;
@@ -118,5 +128,9 @@ public class AlgorithmSignature implements ISqlGenerator {
 		}
 
 		return sql;
+	}
+
+	public void setClassTableType(TableType classTableType) {
+		this.classTableType = classTableType;
 	}
 }

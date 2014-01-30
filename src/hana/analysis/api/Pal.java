@@ -4,6 +4,7 @@ import hana.analysis.models.Analysis;
 import hana.analysis.models.AnalysisResult;
 import hana.analysis.models.DataSource;
 import hana.analysis.models.KmeansAlgorithm;
+import hana.analysis.models.KnnAlgorithm;
 import hana.analysis.models.NbAlgorithm;
 import hana.analysis.models.NbpAlgorithm;
 import hana.analysis.models.SvmAlgorithm;
@@ -50,18 +51,21 @@ public class Pal {
 	 * 
 	 * @return KM_RESULTS, KM_CENTERS
 	 */
-	public static AnalysisResult kmeans(boolean reGenerate, String schemaName, String tableData, LinkedHashMap<String, String> columns, String viewDef,
-			LinkedHashMap<String, Object> params) {
+	public static AnalysisResult kmeans(boolean reGenerate, String schemaName,
+			String tableData, LinkedHashMap<String, String> columns,
+			String viewDef, LinkedHashMap<String, Object> params) {
 
 		Analysis analysis = new Analysis(new KmeansAlgorithm(), schemaName);
 
-		DataSource source = new DataSource(schemaName, tableData, columns,viewDef);
+		DataSource source = new DataSource(schemaName, tableData, columns,
+				viewDef);
 
-		AnalysisResult result = analysis.action(reGenerate, source, null, params);
+		AnalysisResult result = analysis.action(reGenerate, source, null, null, null,
+				params);
 		System.out.println(result);
 		return result;
 	}
-	
+
 	/**
 	 * SAP_HANA_Predictive_Analysis_Library_PAL_en P109
 	 * 
@@ -84,13 +88,17 @@ public class Pal {
 	 * 
 	 * @return NB_MODEL
 	 */
-	public static AnalysisResult naiveBayes(boolean reGenerate, String schemaName, String tableData, LinkedHashMap<String, String> columns, String viewDef,
+	public static AnalysisResult naiveBayes(boolean reGenerate,
+			String schemaName, String tableData,
+			LinkedHashMap<String, String> columns, String viewDef,
 			LinkedHashMap<String, Object> params) {
 		Analysis analysis = new Analysis(new NbAlgorithm(), schemaName);
 
-		DataSource source = new DataSource(schemaName, tableData, columns, viewDef);
+		DataSource source = new DataSource(schemaName, tableData, columns,
+				viewDef);
 
-		AnalysisResult result = analysis.action(reGenerate, source, null, params);
+		AnalysisResult result = analysis.action(reGenerate, source, null, null, null,
+				params);
 		System.out.println(result);
 		return result;
 	}
@@ -119,20 +127,24 @@ public class Pal {
 	 * 
 	 * @return NBP_PREDICT
 	 */
-	public static AnalysisResult naiveBayesPredict(boolean reGenerate, String schemaName, String tableData, LinkedHashMap<String, String> columns, List<List<Object>> data,
+	public static AnalysisResult naiveBayesPredict(boolean reGenerate,
+			String schemaName, String tableData,
+			LinkedHashMap<String, String> columns, List<List<Object>> data,
 			String tableNBModel, LinkedHashMap<String, Object> params) {
 		Analysis analysis = new Analysis(new NbpAlgorithm(), schemaName);
 
-		DataSource source = new DataSource(schemaName, tableData, columns, null, data);
-		
+		DataSource source = new DataSource(schemaName, tableData, columns,
+				null, data);
+
 		List<String> ModelTables = new ArrayList<String>();
 		ModelTables.add(tableNBModel);
 
-		AnalysisResult result = analysis.action(reGenerate, source, ModelTables, params);
+		AnalysisResult result = analysis.action(reGenerate, source, null, null,
+				ModelTables, params);
 		System.out.println(result);
 		return result;
 	}
-	
+
 	/**
 	 * SAP_HANA_Predictive_Analysis_Library_PAL_en P123
 	 * 
@@ -159,13 +171,17 @@ public class Pal {
 	 * 
 	 * @return SV_MODEL1, SV_MODEL2
 	 */
-	public static AnalysisResult supportVectorMachine(boolean reGenerate, String schemaName, String tableData, LinkedHashMap<String, String> columns, String viewDef,
+	public static AnalysisResult supportVectorMachine(boolean reGenerate,
+			String schemaName, String tableData,
+			LinkedHashMap<String, String> columns, String viewDef,
 			LinkedHashMap<String, Object> params) {
 		Analysis analysis = new Analysis(new SvmAlgorithm(), schemaName);
 
-		DataSource source = new DataSource(schemaName, tableData, columns, viewDef);
+		DataSource source = new DataSource(schemaName, tableData, columns,
+				viewDef);
 
-		AnalysisResult result = analysis.action(reGenerate, source, null, params);
+		AnalysisResult result = analysis.action(reGenerate, source, null, null, null, 
+				params);
 		System.out.println(result);
 		return result;
 	}
@@ -190,73 +206,19 @@ public class Pal {
 	 * 
 	 * @return SVP_PREDICT
 	 */
-	public static AnalysisResult supportVectorMachinePredict(boolean reGenerate, String schemaName, String tableData, LinkedHashMap<String, String> columns, List<List<Object>> data,
+	public static AnalysisResult supportVectorMachinePredict(
+			boolean reGenerate, String schemaName, String tableData,
+			LinkedHashMap<String, String> columns, List<List<Object>> data,
 			List<String> ModelTables, LinkedHashMap<String, Object> params) {
 		Analysis analysis = new Analysis(new SvmpAlgorithm(), schemaName);
 
-		DataSource source = new DataSource(schemaName, tableData, columns, null, data);
+		DataSource source = new DataSource(schemaName, tableData, columns,
+				null, data);
 
-		AnalysisResult result = analysis.action(reGenerate, source, ModelTables, params);
+		AnalysisResult result = analysis.action(reGenerate, source, null, null, 
+				ModelTables, params);
 		System.out.println(result);
 		return result;
-	}
-
-	/**
-	 * <pre>
-	 * SAP_HANA_Predictive_Analysis_Library_PAL_en P43
-	 * </pre>
-	 * 
-	 * @param tableData
-	 *            Table name for input data
-	 * @param columns
-	 *            Column names for the input data table
-	 * @param params
-	 *            Parameters for the algorithm
-	 * 
-	 *            <pre>
-	 * 'THREAD_NUMBER': Number of threads.
-	 * 'SIZE_OF_MAP': ???
-	 * 'HEIGHT_OF_MAP': Indicates the height of the map. The default is 10.
-	 * 'WIDTH_OF_MAP': Indicates the width of the map. The default is 10.
-	 * 'MAX_ITERATION': Maximum number of iterations. The default is 200.
-	 * 'NORMALIZATION': Normalization type:
-	 * 					 0 (default) = no
-	 * 					 1 = transform to new range (0.0, 1.0)
-	 * 					 2 = z-score normalization
-	 * </pre>
-	 * 
-	 * @return SOM_RESULTS, SOM_MAP
-	 */
-	public String[] selfOrganizationMap(String tableData, String[] columns,
-			LinkedHashMap<String, Object> params) {
-		// TODO
-		return new String[] { "SOM_RESULTS", "SOM_MAP" };
-	}
-
-	/**
-	 * SAP_HANA_Predictive_Analysis_Library_PAL_en P234
-	 * 
-	 * @param tableData
-	 *            Table name for input data
-	 * @param columns
-	 *            Column names for the input data table
-	 * @param tableMapValues
-	 *            Table name for output data
-	 * @param tableMapVars
-	 *            Table name for output data
-	 * @param params
-	 *            Parameters for the algorithm
-	 * 
-	 *            <pre>
-	 * 'THREAD_NUMBER': Number of threads.
-	 * 
-	 * @return WT_RESULTS
-	 */
-	public String weightedScoreTable(String tableData, String[] columns,
-			String tableMapValues, String tableMapVars,
-			LinkedHashMap<String, Object> params) {
-		// TODO
-		return "WT_RESULTS";
 	}
 
 	/**
@@ -282,10 +244,18 @@ public class Pal {
 	 * 
 	 * @return KNN_PREDICT
 	 */
-	public String kNearestNeighbor(String tableKNNData, String[] columns,
-			String tableKNNClass, LinkedHashMap<String, Object> params) {
-		// TODO
-		return "KNN_PREDICT";
+	public static AnalysisResult kNearestNeighbor(boolean reGenerate,
+			String schemaName, String tableData,
+			LinkedHashMap<String, String> columns, String viewDef,
+			String tableClass, List<List<Object>> classData, LinkedHashMap<String, Object> params) {
+		Analysis analysis = new Analysis(new KnnAlgorithm(), schemaName);
+
+		DataSource source = new DataSource(schemaName, tableData, columns, viewDef);
+
+		AnalysisResult result = analysis.action(reGenerate, source,
+				tableClass, classData, null, params);
+		System.out.println(result);
+		return result;
 	}
 
 	/**
@@ -358,7 +328,63 @@ public class Pal {
 		return "RGP_PREDICTED";
 	}
 
-	
+	/**
+	 * <pre>
+	 * SAP_HANA_Predictive_Analysis_Library_PAL_en P43
+	 * </pre>
+	 * 
+	 * @param tableData
+	 *            Table name for input data
+	 * @param columns
+	 *            Column names for the input data table
+	 * @param params
+	 *            Parameters for the algorithm
+	 * 
+	 *            <pre>
+	 * 'THREAD_NUMBER': Number of threads.
+	 * 'SIZE_OF_MAP': ???
+	 * 'HEIGHT_OF_MAP': Indicates the height of the map. The default is 10.
+	 * 'WIDTH_OF_MAP': Indicates the width of the map. The default is 10.
+	 * 'MAX_ITERATION': Maximum number of iterations. The default is 200.
+	 * 'NORMALIZATION': Normalization type:
+	 * 					 0 (default) = no
+	 * 					 1 = transform to new range (0.0, 1.0)
+	 * 					 2 = z-score normalization
+	 * </pre>
+	 * 
+	 * @return SOM_RESULTS, SOM_MAP
+	 */
+	public String[] selfOrganizationMap(String tableData, String[] columns,
+			LinkedHashMap<String, Object> params) {
+		// TODO
+		return new String[] { "SOM_RESULTS", "SOM_MAP" };
+	}
+
+	/**
+	 * SAP_HANA_Predictive_Analysis_Library_PAL_en P234
+	 * 
+	 * @param tableData
+	 *            Table name for input data
+	 * @param columns
+	 *            Column names for the input data table
+	 * @param tableMapValues
+	 *            Table name for output data
+	 * @param tableMapVars
+	 *            Table name for output data
+	 * @param params
+	 *            Parameters for the algorithm
+	 * 
+	 *            <pre>
+	 * 'THREAD_NUMBER': Number of threads.
+	 * 
+	 * @return WT_RESULTS
+	 */
+	public String weightedScoreTable(String tableData, String[] columns,
+			String tableMapValues, String tableMapVars,
+			LinkedHashMap<String, Object> params) {
+		// TODO
+		return "WT_RESULTS";
+	}
 
 	/**
 	 * Decision Tree C4.5 SAP_HANA_Predictive_Analysis_Library_PAL_en P66
