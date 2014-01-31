@@ -5,6 +5,8 @@ import hana.analysis.models.AnalysisResult;
 import hana.analysis.models.DataSource;
 import hana.analysis.models.KmeansAlgorithm;
 import hana.analysis.models.KnnAlgorithm;
+import hana.analysis.models.LrAlgorithm;
+import hana.analysis.models.LrpAlgorithm;
 import hana.analysis.models.NbAlgorithm;
 import hana.analysis.models.NbpAlgorithm;
 import hana.analysis.models.SvmAlgorithm;
@@ -60,8 +62,8 @@ public class Pal {
 		DataSource source = new DataSource(schemaName, tableData, columns,
 				viewDef);
 
-		AnalysisResult result = analysis.action(reGenerate, source, null, null, null,
-				params);
+		AnalysisResult result = analysis.action(reGenerate, source, null, null,
+				null, params);
 		System.out.println(result);
 		return result;
 	}
@@ -97,8 +99,8 @@ public class Pal {
 		DataSource source = new DataSource(schemaName, tableData, columns,
 				viewDef);
 
-		AnalysisResult result = analysis.action(reGenerate, source, null, null, null,
-				params);
+		AnalysisResult result = analysis.action(reGenerate, source, null, null,
+				null, params);
 		System.out.println(result);
 		return result;
 	}
@@ -180,8 +182,8 @@ public class Pal {
 		DataSource source = new DataSource(schemaName, tableData, columns,
 				viewDef);
 
-		AnalysisResult result = analysis.action(reGenerate, source, null, null, null, 
-				params);
+		AnalysisResult result = analysis.action(reGenerate, source, null, null,
+				null, params);
 		System.out.println(result);
 		return result;
 	}
@@ -215,7 +217,7 @@ public class Pal {
 		DataSource source = new DataSource(schemaName, tableData, columns,
 				null, data);
 
-		AnalysisResult result = analysis.action(reGenerate, source, null, null, 
+		AnalysisResult result = analysis.action(reGenerate, source, null, null,
 				ModelTables, params);
 		System.out.println(result);
 		return result;
@@ -247,13 +249,15 @@ public class Pal {
 	public static AnalysisResult kNearestNeighbor(boolean reGenerate,
 			String schemaName, String tableData,
 			LinkedHashMap<String, String> columns, String viewDef,
-			String tableClass, List<List<Object>> classData, LinkedHashMap<String, Object> params) {
+			String tableClass, List<List<Object>> classData,
+			LinkedHashMap<String, Object> params) {
 		Analysis analysis = new Analysis(new KnnAlgorithm(), schemaName);
 
-		DataSource source = new DataSource(schemaName, tableData, columns, viewDef);
+		DataSource source = new DataSource(schemaName, tableData, columns,
+				viewDef);
 
-		AnalysisResult result = analysis.action(reGenerate, source,
-				tableClass, classData, null, params);
+		AnalysisResult result = analysis.action(reGenerate, source, tableClass,
+				classData, null, params);
 		System.out.println(result);
 		return result;
 	}
@@ -286,10 +290,19 @@ public class Pal {
 	 * 
 	 * @return RG_COEFF, RG_PMML
 	 */
-	public String[] logisticRegression(String tableData, String[] columns,
+	public static AnalysisResult logisticRegression(boolean reGenerate,
+			String schemaName, String tableData,
+			LinkedHashMap<String, String> columns, String viewDef,
 			LinkedHashMap<String, Object> params) {
-		// TODO
-		return new String[] { "RG_COEFF", "RG_PMML" };
+		Analysis analysis = new Analysis(new LrAlgorithm(), schemaName);
+
+		DataSource source = new DataSource(schemaName, tableData, columns,
+				viewDef);
+
+		AnalysisResult result = analysis.action(reGenerate, source, null, null,
+				null, params);
+		System.out.println(result);
+		return result;
 	}
 
 	/**
@@ -322,10 +335,22 @@ public class Pal {
 	 * 
 	 * @return RGP_PREDICTED
 	 */
-	public String logisticRegressionPredict(String tableData, String[] columns,
-			String tableCoeff, LinkedHashMap<String, Object> params) {
-		// TODO
-		return "RGP_PREDICTED";
+	public static AnalysisResult logisticRegressionPredict(boolean reGenerate,
+			String schemaName, String tableData,
+			LinkedHashMap<String, String> columns, List<List<Object>> data,
+			String tableNBModel, LinkedHashMap<String, Object> params) {
+		Analysis analysis = new Analysis(new LrpAlgorithm(), schemaName);
+
+		DataSource source = new DataSource(schemaName, tableData, columns,
+				null, data);
+
+		List<String> ModelTables = new ArrayList<String>();
+		ModelTables.add(tableNBModel);
+
+		AnalysisResult result = analysis.action(reGenerate, source, null, null,
+				ModelTables, params);
+		System.out.println(result);
+		return result;
 	}
 
 	/**
