@@ -1,5 +1,7 @@
 package hana.analysis.db;
 
+import hana.analysis.models.ResultSetModel;
+
 import java.sql.*;
 import java.util.*;
 
@@ -43,7 +45,7 @@ public class Connector {
 
 	// public List<HashMap<String, Object>> Query(String sql) throws
 	// SQLException {
-	public String Query(String sql) throws SQLException {
+	public ResultSetModel Query(String sql) throws SQLException {
 		Connection con = null;
 		Statement stmt = null;
 		ResultSet rs = null;
@@ -53,8 +55,11 @@ public class Connector {
 			stmt = con.createStatement();
 			rs = stmt.executeQuery(sql);
 
+			//return convertResultSetToString(rs);
 			
-			return convertResultSetToString(rs);
+			ResultSetModel resultSetModel = new ResultSetModel(rs);
+			
+			return resultSetModel;
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -69,24 +74,39 @@ public class Connector {
 		return null;
 	}
 
-	public String convertResultSetToString(ResultSet rs) throws SQLException, JsonProcessingException {
-		/*
-		StringBuilder sb = new StringBuilder();
-		ResultSetMetaData rsmd = rs.getMetaData();
-		int columnsNumber = rsmd.getColumnCount();
-		while (rs.next()) {
-			for (int i = 1; i <= columnsNumber; i++) {
-				if (i > 1)
-					sb.append(",  ");
-				String columnValue = rs.getString(i);
-				sb.append(columnValue + " " + rsmd.getColumnName(i));
+	public int QueryCount(String sql) throws SQLException {
+		Connection con = null;
+		Statement stmt = null;
+		ResultSet rs = null;
+		int count = 0;
+
+		try {
+			con = getConnection();
+			stmt = con.createStatement();
+			rs = stmt.executeQuery(sql);
+			while (rs.next()) {
+				count++;
 			}
-			sb.append('\n');
+			return count;
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			if (rs != null)
+				rs.close();
+			if (stmt != null)
+				stmt.close();
+			if (con != null)
+				con.close();
 		}
-		System.out.println(sb.toString());
-		return sb.toString();
-		*/
-		ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
+		return count;
+	}
+
+	public String convertResultSetToString(ResultSet rs) throws SQLException,
+			JsonProcessingException {
+
+		ObjectWriter ow = new ObjectMapper().writer()
+				.withDefaultPrettyPrinter();
 		Object o = resultSetToHashMap(rs);
 		String json = ow.writeValueAsString(o);
 		return json;
@@ -94,9 +114,10 @@ public class Connector {
 
 	public void QueryWithoutResult(String sql) throws SQLException,
 			ClassNotFoundException {
-		
-		if(sql.isEmpty()) return;
-		
+
+		if (sql.isEmpty())
+			return;
+
 		Connection con = null;
 		Statement stmt = null;
 		String[] sqls = sql.split(";");
@@ -144,33 +165,24 @@ public class Connector {
 	}
 
 	/*
-	public static JSONArray convertToJSON(ResultSet resultSet) throws Exception {
-		JSONArray jsonArray = new JSONArray();
-		while (resultSet.next()) {
-			int total_rows = resultSet.getMetaData().getColumnCount();
-			JSONObject obj = new JSONObject();
-			for (int i = 0; i < total_rows; i++) {
-				obj.put(resultSet.getMetaData().getColumnLabel(i + 1)
-						.toLowerCase(), resultSet.getObject(i + 1));
-			}
-			jsonArray.add(obj);
-		}
-		return jsonArray;
-	}
-	
-
-	public static JSONArray convertToJSON(List<HashMap<String, Object>> list)
-			throws Exception {
-
-		JSONArray jsonArray = new JSONArray();
-
-		for (HashMap<String, Object> map : list) {
-			jsonArray.add(map);
-		}
-
-		return jsonArray;
-	}
-	*/
+	 * public static JSONArray convertToJSON(ResultSet resultSet) throws
+	 * Exception { JSONArray jsonArray = new JSONArray(); while
+	 * (resultSet.next()) { int total_rows =
+	 * resultSet.getMetaData().getColumnCount(); JSONObject obj = new
+	 * JSONObject(); for (int i = 0; i < total_rows; i++) {
+	 * obj.put(resultSet.getMetaData().getColumnLabel(i + 1) .toLowerCase(),
+	 * resultSet.getObject(i + 1)); } jsonArray.add(obj); } return jsonArray; }
+	 * 
+	 * 
+	 * public static JSONArray convertToJSON(List<HashMap<String, Object>> list)
+	 * throws Exception {
+	 * 
+	 * JSONArray jsonArray = new JSONArray();
+	 * 
+	 * for (HashMap<String, Object> map : list) { jsonArray.add(map); }
+	 * 
+	 * return jsonArray; }
+	 */
 
 	public static void main(String args[]) {
 		Connector c = new Connector();
@@ -184,4 +196,5 @@ public class Connector {
 			e.printStackTrace();
 		}
 	}
+
 }

@@ -13,7 +13,7 @@ public class LrpAlgorithm extends Algorithm {
 		this.params = new ArrayList<AlgorithmParameter>();
 		this.params.add(new AlgorithmParameter("THREAD_NUMBER", "Number of threads.", 2));
 
-		this.signature = new AlgorithmSignature("PAL.PAL_NBP_SIGNATURE", this.name);
+		this.signature = new AlgorithmSignature("PAL.PAL_RGP_SIGNATURE", this.name);
 
 		LinkedHashMap<String, String> ParamColumns = new LinkedHashMap<String, String>();
 		ParamColumns.put("NAME", "VARCHAR(60)");

@@ -5,6 +5,8 @@ import hana.analysis.db.Connector;
 import java.sql.SQLException;
 import java.util.*;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+
 public class Analysis {
 	private IAlgorithmAdapter adapter;
 
@@ -21,7 +23,7 @@ public class Analysis {
 
 		Connector c = new Connector();
 		try {
-			if (reGenerate) {
+			if (reGenerate || !isAlgorithmExists()) {
 				try {
 					c.QueryWithoutResult(sqlBuild);
 				} catch (Exception e) {
@@ -37,6 +39,18 @@ public class Analysis {
 			e.printStackTrace();
 		}
 		return null;
+	}
+	
+	public boolean isAlgorithmExists() {
+		String sql = String.format("SELECT * FROM  SYS.Procedures where schema_name = '_SYS_AFL' and procedure_name = '%s'", adapter.getAlgorithm().getProcedureName());
+		
+		Connector c = new Connector();
+		try {
+			return c.QueryCount(sql) > 0;
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return false;
 	}
 
 	public static void main(String[] args) {
@@ -58,8 +72,7 @@ public class Analysis {
 		for (String table : result.getTables()) {
 			System.out.printf("<<<<<<<<<<%s>>>>>>>>\n", table);
 			try {
-				System.out.println(c.Query(String.format("select * from %s",
-						table)));
+				System.out.println(c.Query(String.format("select * from %s", table)));
 			} catch (SQLException e) {
 				e.printStackTrace();
 			}

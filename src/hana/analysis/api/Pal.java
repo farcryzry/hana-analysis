@@ -7,6 +7,8 @@ import hana.analysis.models.KmeansAlgorithm;
 import hana.analysis.models.KnnAlgorithm;
 import hana.analysis.models.LrAlgorithm;
 import hana.analysis.models.LrpAlgorithm;
+import hana.analysis.models.MlrAlgorithm;
+import hana.analysis.models.MlrpAlgorithm;
 import hana.analysis.models.NbAlgorithm;
 import hana.analysis.models.NbpAlgorithm;
 import hana.analysis.models.SvmAlgorithm;
@@ -338,17 +340,47 @@ public class Pal {
 	public static AnalysisResult logisticRegressionPredict(boolean reGenerate,
 			String schemaName, String tableData,
 			LinkedHashMap<String, String> columns, List<List<Object>> data,
-			String tableNBModel, LinkedHashMap<String, Object> params) {
+			String tableModel, LinkedHashMap<String, Object> params) {
 		Analysis analysis = new Analysis(new LrpAlgorithm(), schemaName);
 
 		DataSource source = new DataSource(schemaName, tableData, columns,
 				null, data);
 
 		List<String> ModelTables = new ArrayList<String>();
-		ModelTables.add(tableNBModel);
+		ModelTables.add(tableModel);
 
 		AnalysisResult result = analysis.action(reGenerate, source, null, null,
 				ModelTables, params);
+		System.out.println(result);
+		return result;
+	}
+	
+	public static AnalysisResult multipleLinearRegression(boolean reGenerate,
+			String schemaName, String tableData,
+			LinkedHashMap<String, String> columns, String viewDef,
+			LinkedHashMap<String, Object> params) {
+		Analysis analysis = new Analysis(new MlrAlgorithm(), schemaName);
+
+		DataSource source = new DataSource(schemaName, tableData, columns,
+				viewDef);
+
+		AnalysisResult result = analysis.action(reGenerate, source, null, null,
+				null, params);
+		System.out.println(result);
+		return result;
+	}
+	
+	public static AnalysisResult multipleLinearRegressionPredict(boolean reGenerate,
+			String schemaName, String tableData,
+			LinkedHashMap<String, String> columns, List<List<Object>> data,
+			String classTable, LinkedHashMap<String, Object> params) {
+		Analysis analysis = new Analysis(new MlrpAlgorithm(), schemaName);
+
+		DataSource source = new DataSource(schemaName, tableData, columns,
+				null, data);
+
+		AnalysisResult result = analysis.action(reGenerate, source, classTable, null,
+				null, params);
 		System.out.println(result);
 		return result;
 	}
